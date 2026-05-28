@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — MoneyMint</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍃</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+          <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+          <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+        </svg>
+      </div>
+      <div class="loading-title">Money<span>Mint</span></div>
+      <div class="loading-subtitle">Loading your financial dashboard...</div>
+      <div class="loading-progress"><div class="loading-progress-bar"></div></div>
+    </div>
+  </div>
+  <div class="dashboard-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">M</div>
+        <div class="sidebar-brand-text">Money<span>Mint</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label" onclick="toggleSection('main')">
+          <span>Main</span>
+          <i data-lucide="chevron-down" class="section-chevron"></i>
+        </div>
+        <div class="nav-section-content" id="section-main">
+          <div class="nav-item active" data-tab="dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-tab="income">
+            <i data-lucide="wallet"></i>
+            <span>Income</span>
+          </div>
+          <div class="nav-item" data-tab="expenses">
+            <i data-lucide="arrow-down-circle"></i>
+            <span>Expenses</span>
+          </div>
+          <div class="nav-item" data-tab="investments">
+            <i data-lucide="trending-up"></i>
+            <span>Investments</span>
+          </div>
+          <div class="nav-item" data-tab="analytics">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Analytics</span>
+          </div>
+        </div>
+        <div class="nav-section-label" onclick="toggleSection('planning')" style="margin-top:4px">
+          <span>Planning</span>
+          <i data-lucide="chevron-down" class="section-chevron"></i>
+        </div>
+        <div class="nav-section-content" id="section-planning">
+          <div class="nav-item" data-tab="history">
+            <i data-lucide="clock"></i>
+            <span>History</span>
+          </div>
+          <div class="nav-item" data-tab="budgets">
+            <i data-lucide="target"></i>
+            <span>Budgets</span>
+          </div>
+          <div class="nav-item" data-tab="goals">
+            <i data-lucide="flag"></i>
+            <span>Goals</span>
+          </div>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="nav-item" id="sidebarSettingsBtn">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Collapse sidebar">
+          <i data-lucide="chevron-left" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Navbar -->
+      <header class="navbar">
+        <div class="navbar-left">
+          <button class="hamburger" id="hamburger">
+            <i data-lucide="menu" style="width:22px;height:22px"></i>
+          </button>
+          <h1 class="navbar-page-title" id="pageTitle">Overview</h1>
+        </div>
+        <div class="navbar-right">
+          <div class="navbar-balance" id="navbarBalance">
+            <span class="navbar-balance-label">Balance</span>
+            <span class="navbar-balance-value" id="navbarBalanceValue">$0.00</span>
+          </div>
+          <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <i data-lucide="moon" style="width:18px;height:18px"></i>
+          </button>
+          <div class="notification-dropdown">
+            <button class="theme-toggle" id="notificationBell" title="Notifications">
+              <span class="notification-badge" id="notificationBadge" style="display:none">0</span>
+              <i data-lucide="bell" style="width:18px;height:18px"></i>
+            </button>
+            <div class="notification-panel" id="notificationPanel">
+              <div class="notification-panel-header">
+                <span class="notification-panel-title">Notifications</span>
+                <button class="notification-mark-read" id="markAllReadBtn">Mark all as read</button>
+              </div>
+              <div class="notification-panel-list" id="notificationList"></div>
+              <div class="notification-panel-footer">
+                <button class="notification-delete-all" id="deleteAllNotifBtn">
+                  <i data-lucide="trash-2" style="width:14px;height:14px"></i>
+                  Delete All Notifications
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="profile-dropdown">
+            <div class="profile-trigger" id="profileTrigger">
+              <div class="profile-avatar" id="profileAvatarTrigger">
+                <img id="profileAvatarImg" style="display:none;width:100%;height:100%;border-radius:50%;object-fit:cover" alt="Avatar">
+                <span id="profileAvatarLetter">U</span>
+              </div>
+              <span class="profile-name">User</span>
+              <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--text-light)"></i>
+            </div>
+            <div class="profile-menu" id="profileMenu">
+              <div class="profile-menu-item" style="cursor:default">
+                <div class="profile-avatar" style="width:40px;height:40px;float:left;margin-right:12px">
+                  <img id="profileMenuAvatarImg" style="display:none;width:100%;height:100%;border-radius:50%;object-fit:cover" alt="Avatar">
+                  <span id="profileMenuAvatarLetter">U</span>
+                </div>
+                <div style="overflow:hidden">
+                  <div style="font-weight:600;color:var(--text);font-size:14px" class="profile-name">User</div>
+                  <div id="profileEmail" style="font-size:11px;color:var(--text-lighter)">user@example.com</div>
+                </div>
+              </div>
+              <div class="profile-menu-divider"></div>
+              <div class="profile-menu-item" id="changePhotoBtn">
+                <i data-lucide="camera" style="width:16px;height:16px"></i>
+                Change Photo
+              </div>
+              <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+              <div class="profile-menu-divider"></div>
+              <div class="profile-menu-item danger" id="logoutBtn">
+                <i data-lucide="log-out" style="width:16px;height:16px"></i>
+                Sign Out
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="page-content">
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboardTab">
+          <div class="section-header">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Your financial summary at a glance</p>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="card summary-card animate-fade-in animate-fade-in-delay-1">
+              <div class="summary-card-icon green">
+                <i data-lucide="wallet" style="width:22px;height:22px"></i>
+              </div>
+              <div class="summary-card-label">Total Balance</div>
+              <div class="summary-card-value" id="totalBalance">$0.00</div>
+              <div class="summary-card-change positive">&uarr; Smart finance</div>
+            </div>
+            <div class="card summary-card animate-fade-in animate-fade-in-delay-2">
+              <div class="summary-card-icon red">
+                <i data-lucide="arrow-down-circle" style="width:22px;height:22px"></i>
+              </div>
+              <div class="summary-card-label">Total Expenses</div>
+              <div class="summary-card-value" id="totalExpenses">$0.00</div>
+              <div class="summary-card-change negative">All time</div>
+            </div>
+            <div class="card summary-card animate-fade-in animate-fade-in-delay-3">
+              <div class="summary-card-icon green">
+                <i data-lucide="trending-up" style="width:22px;height:22px"></i>
+              </div>
+              <div class="summary-card-label">Total Income</div>
+              <div class="summary-card-value" id="totalIncome">$0.00</div>
+              <div class="summary-card-change positive">All time earnings</div>
+            </div>
+            <div class="card summary-card animate-fade-in animate-fade-in-delay-4">
+              <div class="summary-card-icon yellow">
+                <i data-lucide="piggy-bank" style="width:22px;height:22px"></i>
+              </div>
+              <div class="summary-card-label">Total Savings</div>
+              <div class="summary-card-value" id="totalSavings">$0.00</div>
+              <div class="summary-card-change positive">Growing steadily</div>
+            </div>
+            <div class="card summary-card animate-fade-in animate-fade-in-delay-5">
+              <div class="summary-card-icon blue">
+                <i data-lucide="trending-up" style="width:22px;height:22px"></i>
+              </div>
+              <div class="summary-card-label">Total Investments</div>
+              <div class="summary-card-value" id="totalInvestments">$0.00</div>
+              <div class="summary-card-change positive">Portfolio value</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Monthly Spending Overview</div>
+                  <div class="card-subtitle">Last 6 months</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="monthlyBarChart"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Savings Growth</div>
+                  <div class="card-subtitle">Projected savings trend</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="savingsLineChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Recent Transactions</div>
+                  <div class="card-subtitle">Your latest activity</div>
+                </div>
+              </div>
+              <div class="transaction-list" id="recentTransactions">
+                <div class="empty-state" style="padding:20px">
+                  <h3>No transactions yet</h3>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Smart Insights</div>
+                  <div class="card-subtitle">AI-powered suggestions</div>
+                </div>
+              </div>
+              <div id="insightsContainer">
+                <div class="insight-card">
+                  <div class="insight-icon tip"><i data-lucide="lightbulb" style="width:20px;height:20px"></i></div>
+                  <div class="insight-text">
+                    <strong>Loading insights...</strong><br>
+                    Analyzing your financial data.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expenses Tab -->
+        <div class="tab-content" id="expensesTab">
+          <div class="section-header">
+            <div>
+              <h2>Expenses</h2>
+              <p>Track and manage your daily spending. Current month: <strong id="currentMonthExpenses" style="color:var(--primary)">$0.00</strong></p>
+            </div>
+            <button class="btn btn-primary" onclick="openExpenseModal()">
+              <i data-lucide="plus" style="width:16px;height:16px"></i>
+              Add Expense
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <select class="form-select" id="expenseFilter">
+              <option value="all">All Categories</option>
+              <option value="Food">Food</option>
+              <option value="Travel">Travel</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Others">Others</option>
+            </select>
+            <input class="form-input" id="expenseSearch" type="text" placeholder="Search expenses..." style="min-width:200px">
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th style="width:80px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expenseTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Income Tab -->
+        <div class="tab-content" id="incomeTab">
+          <div class="section-header">
+            <div>
+              <h2>Income</h2>
+              <p>Track your earnings. Current month: <strong id="currentMonthIncome" style="color:var(--primary)">$0.00</strong></p>
+            </div>
+            <button class="btn btn-primary" onclick="openIncomeModal()">
+              <i data-lucide="plus" style="width:16px;height:16px"></i>
+              Add Income
+            </button>
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th style="width:80px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="incomeTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Investments Tab -->
+        <div class="tab-content" id="investmentsTab">
+          <div class="section-header">
+            <div>
+              <h2>Investments</h2>
+              <p>Track your investment portfolio. Total: <strong id="currentMonthInvestments" style="color:var(--primary)">$0.00</strong></p>
+            </div>
+            <button class="btn btn-primary" onclick="openInvestmentModal()">
+              <i data-lucide="plus" style="width:16px;height:16px"></i>
+              Add Investment
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <select class="form-select" id="investmentFilter">
+              <option value="all">All Types</option>
+              <option value="Stocks">Stocks</option>
+              <option value="Mutual Funds">Mutual Funds</option>
+              <option value="Crypto">Crypto</option>
+              <option value="Gold">Gold</option>
+              <option value="SIP">SIP</option>
+              <option value="Fixed Deposit">Fixed Deposit</option>
+            </select>
+            <input class="form-input" id="investmentSearch" type="text" placeholder="Search investments..." style="min-width:200px">
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Value</th>
+                  <th style="width:80px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="investmentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="analyticsTab">
+          <div class="section-header">
+            <div>
+              <h2>Analytics</h2>
+              <p>Visual insights into your financial data</p>
+            </div>
+            <button class="btn btn-outline btn-sm" id="generateReportBtn">
+              <i data-lucide="file-text" style="width:16px;height:16px"></i>
+              Generate Report
+            </button>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Expense by Category</div>
+                <div class="card-subtitle">Where your money goes</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="expensePieChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Monthly Expenses</div>
+                <div class="card-subtitle">Last 6 months trend</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="monthlyBarChartA"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Income by Category</div>
+                <div class="card-subtitle">Where your money comes from</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="incomeDoughnutChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Savings Growth</div>
+                <div class="card-subtitle">Projected trajectory</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="savingsLineChartA"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Investments by Type</div>
+                <div class="card-subtitle">Portfolio allocation</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="investmentPieChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Investment Growth</div>
+                <div class="card-subtitle">Last 6 months</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="investmentBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-content" id="historyTab">
+          <div class="section-header">
+            <div>
+              <h2>Transaction History</h2>
+              <p>Complete record of all your financial activity</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm" id="exportCSV">
+                <i data-lucide="download" style="width:16px;height:16px"></i>
+                Export CSV
+              </button>
+              <button class="btn btn-outline btn-sm" id="exportPDF">
+                <i data-lucide="file-text" style="width:16px;height:16px"></i>
+                Export PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <input class="form-input" id="historySearch" type="text" placeholder="Search transactions..." style="min-width:200px">
+            <select class="form-select" id="historyTypeFilter">
+              <option value="all">All Types</option>
+              <option value="Expense">Expenses</option>
+              <option value="Income">Income</option>
+              <option value="Investment">Investments</option>
+            </select>
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Budgets Tab -->
+        <div class="tab-content" id="budgetsTab">
+          <div class="section-header">
+            <div>
+              <h2>Budget Planning</h2>
+              <p>Set monthly spending limits and track your progress</p>
+            </div>
+            <button class="btn btn-primary" onclick="openBudgetModal()">
+              <i data-lucide="settings" style="width:16px;height:16px"></i>
+              Manage Budgets
+            </button>
+          </div>
+          <div id="budgetsContainer"></div>
+        </div>
+
+        <!-- Goals Tab -->
+        <div class="tab-content" id="goalsTab">
+          <div class="section-header">
+            <div>
+              <h2>Savings Goals</h2>
+              <p>Track your financial goals and milestones</p>
+            </div>
+          </div>
+          <div id="goalsContainer"></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fab" title="Quick Add">
+    <i data-lucide="plus"></i>
+  </button>
+
+  <!-- Delete All Notifications Confirmation Modal -->
+  <div class="modal-overlay" id="deleteNotifModal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-body" style="text-align:center;padding:32px 28px 20px">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+          <i data-lucide="trash-2" style="width:24px;height:24px;color:var(--danger)"></i>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Delete All Notifications?</h3>
+        <p style="font-size:14px;color:var(--text-light);margin-bottom:20px;line-height:1.5">Are you sure you want to delete all notifications? This action cannot be undone.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" onclick="document.getElementById('deleteNotifModal').classList.remove('active')" style="flex:1">Cancel</button>
+          <button class="btn btn-danger" id="confirmDeleteNotifBtn" style="flex:1">Delete All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Modal -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="expenseModalTitle">Add Expense</h3>
+        <button class="modal-close" onclick="closeExpenseModal()">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input class="form-input" id="expenseName" type="text" placeholder="e.g. Grocery shopping">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <input class="form-input" id="expenseAmount" type="number" step="0.01" min="0" placeholder="e.g. 49.99">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="expenseCategory">
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="expenseDate" type="date">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeExpenseModal()">Cancel</button>
+        <button class="btn btn-primary" id="expenseSubmitBtn" onclick="saveExpense()">Add Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Income Modal -->
+  <div class="modal-overlay" id="incomeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="incomeModalTitle">Add Income</h3>
+        <button class="modal-close" onclick="closeIncomeModal()">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input class="form-input" id="incomeName" type="text" placeholder="e.g. Monthly Salary">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <input class="form-input" id="incomeAmount" type="number" step="0.01" min="0" placeholder="e.g. 5000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="incomeCategory">
+            <option value="Salary">Salary</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Business">Business</option>
+            <option value="Investment Returns">Investment Returns</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="incomeDate" type="date">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeIncomeModal()">Cancel</button>
+        <button class="btn btn-primary" id="incomeSubmitBtn" onclick="saveIncome()">Add Income</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Investment Modal -->
+  <div class="modal-overlay" id="investmentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Investment</h3>
+        <button class="modal-close" onclick="closeInvestmentModal()">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Investment Name</label>
+          <input class="form-input" id="investmentName" type="text" placeholder="e.g. Apple Stocks">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <input class="form-input" id="investmentAmount" type="number" step="0.01" min="0" placeholder="e.g. 5000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="investmentType">
+            <option value="Stocks">Stocks</option>
+            <option value="Mutual Funds">Mutual Funds</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Gold">Gold</option>
+            <option value="SIP">SIP</option>
+            <option value="Fixed Deposit">Fixed Deposit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="investmentDate" type="date">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeInvestmentModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInvestment()">Add Investment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Modal -->
+  <div class="modal-overlay" id="goalModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="goalModalTitle">New Savings Goal</h3>
+        <button class="modal-close" onclick="closeGoalModal()">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Goal Name</label>
+          <input class="form-input" id="goalName" type="text" placeholder="e.g. Emergency Fund">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Amount</label>
+          <input class="form-input" id="goalTarget" type="number" step="0.01" min="0" placeholder="e.g. 10000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Current Amount</label>
+          <input class="form-input" id="goalCurrent" type="number" step="0.01" min="0" placeholder="e.g. 2000" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deadline (Optional)</label>
+          <input class="form-input" id="goalDeadline" type="date">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeGoalModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveGoal()">Save Goal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Modal -->
+  <div class="modal-overlay" id="budgetModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Manage Monthly Budgets</h3>
+        <button class="modal-close" onclick="document.getElementById('budgetModal').classList.remove('active')">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="budgetFormContainer"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="document.getElementById('budgetModal').classList.remove('active')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveBudgets()">Save Budgets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Settings</h3>
+        <button class="modal-close" onclick="App.closeSettings()">
+          <i data-lucide="x" style="width:18px;height:18px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Default Currency</label>
+          <select class="form-input" id="settingsCurrency">
+            <option value="USD">$ — US Dollar</option>
+            <option value="EUR">€ — Euro</option>
+            <option value="GBP">£ — British Pound</option>
+            <option value="INR">₹ — Indian Rupee</option>
+            <option value="JPY">¥ — Japanese Yen</option>
+            <option value="CAD">CA$ — Canadian Dollar</option>
+            <option value="AUD">AU$ — Australian Dollar</option>
+            <option value="BRL">R$ — Brazilian Real</option>
+            <option value="CHF">CHF — Swiss Franc</option>
+            <option value="CNY">¥ — Chinese Yuan</option>
+            <option value="KRW">₩ — South Korean Won</option>
+            <option value="MXN">MX$ — Mexican Peso</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Theme</label>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--bg)">
+            <span style="font-size:14px;color:var(--text)">Dark Mode</span>
+            <button class="settings-theme-toggle" id="settingsThemeToggle">
+              <span class="settings-theme-knob"></span>
+            </button>
+          </div>
+          <div style="font-size:11px;color:var(--text-lighter);margin-top:4px">Also available via the <i data-lucide="moon" style="width:12px;height:12px;display:inline-block;vertical-align:middle"></i> icon in the top navbar.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notifications</label>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--bg)">
+            <span style="font-size:14px;color:var(--text)">Transaction Notifications</span>
+            <button class="settings-theme-toggle" id="settingsNotificationsToggle">
+              <span class="settings-theme-knob"></span>
+            </button>
+          </div>
+          <div style="font-size:11px;color:var(--text-lighter);margin-top:4px">Get desktop alerts when you add income or expenses.</div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+        <div class="form-group">
+          <label class="form-label">Account</label>
+          <button class="btn btn-danger" id="settingsLogoutBtn" style="width:100%;justify-content:center">
+            <i data-lucide="log-out" style="width:16px;height:16px"></i>
+            Sign Out
+          </button>
+        </div>
+        <div class="danger-zone">
+          <hr class="danger-zone-hr">
+          <div class="danger-zone-label">
+            <i data-lucide="alert-triangle" style="width:14px;height:14px"></i>
+            Danger Zone
+          </div>
+          <p class="danger-zone-desc">Permanently delete all your expenses, investments, and budgets. This cannot be undone.</p>
+          <button class="btn btn-danger" id="settingsResetBtn" style="width:100%;justify-content:center">
+            <i data-lucide="trash-2" style="width:16px;height:16px"></i>
+            Reset All Data
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="App.closeSettings()">Cancel</button>
+        <button class="btn btn-primary" onclick="App.saveSettings()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/expenses.js"></script>
+  <script src="js/income.js"></script>
+  <script src="js/investments.js"></script>
+  <script src="js/goals.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
+
+

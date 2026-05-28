@@ -1,6 +1,6 @@
-# MoneyMint 🍃
+# MoneyMint AI 🍃
 
-**Smart Finance, Simple Living** — A modern, responsive personal finance management web application.
+**Track Smarter. Invest Better. Powered by AI.** — A modern, responsive personal finance management web application.
 
 ## Features
 
@@ -39,7 +39,7 @@
 ## Project Structure
 
 ```
-MoneyMint/
+MoneyMintAI/
 ├── frontend/
 │   ├── index.html          Landing page
 │   ├── login.html          Authentication
@@ -68,4 +68,4 @@ MoneyMint/
 ├── package.json
 └── README.md
 ```
-"# MoneyMint-Project" 
+"# MoneyMintAI-Project" 

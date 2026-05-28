@@ -34,7 +34,7 @@ app.use((err, req, res, next) => {
 
 
 app.listen(PORT, () => {
-  console.log(`\n  MoneyMint is running!`);
+  console.log(`\n  MoneyMint AI is running!`);
   console.log(`  `);
   console.log(`  Local:   http://localhost:${PORT}`);
   console.log(`  Dev:     http://localhost:${PORT}\n`);

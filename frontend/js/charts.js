@@ -634,7 +634,7 @@ function renderInsights() {
       <div class="insight-card">
         <div class="insight-icon tip"><i data-lucide="lightbulb" style="width:20px;height:20px"></i></div>
         <div class="insight-text">
-          <strong>Welcome to MoneyMint!</strong><br>
+          <strong>Welcome to MoneyMint AI!</strong><br>
           Start by adding your income and expenses to get personalized financial insights.
         </div>
       </div>

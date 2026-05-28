@@ -720,6 +720,11 @@ const App = {
       resetBtn.addEventListener('click', () => this.resetAllData());
     }
 
+    const deleteAccountBtn = document.getElementById('settingsDeleteAccountBtn');
+    if (deleteAccountBtn) {
+      deleteAccountBtn.addEventListener('click', () => this.openDeleteAccountModal());
+    }
+
     const settingsThemeToggle = document.getElementById('settingsThemeToggle');
     if (settingsThemeToggle) {
       settingsThemeToggle.addEventListener('click', () => {
@@ -857,6 +862,51 @@ const App = {
         btn.closest('.modal-overlay').classList.remove('active');
       });
     });
+
+    const confirmDeleteBtn = document.getElementById('confirmDeleteAccountBtn');
+    if (confirmDeleteBtn) {
+      confirmDeleteBtn.addEventListener('click', () => this.deleteAccount());
+    }
+  },
+
+  openDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    if (!modal) return;
+    document.getElementById('deleteAccountPassword').value = '';
+    document.getElementById('deleteAccountError').classList.remove('show');
+    modal.classList.add('active');
+  },
+
+  closeDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    if (!modal) return;
+    modal.classList.remove('active');
+    document.getElementById('deleteAccountError').classList.remove('show');
+  },
+
+  async deleteAccount() {
+    const password = document.getElementById('deleteAccountPassword').value;
+    const errorEl = document.getElementById('deleteAccountError');
+
+    if (!password) {
+      errorEl.textContent = 'Please enter your password.';
+      errorEl.classList.add('show');
+      return;
+    }
+
+    const result = await Auth.deleteAccount(password);
+    if (result.success) {
+      const isGuest = localStorage.getItem('mm_is_guest') === 'true';
+      if (isGuest) {
+        localStorage.removeItem('mm_is_guest');
+        localStorage.removeItem('mm_session');
+      }
+      localStorage.clear();
+      window.location.href = 'login.html';
+    } else {
+      errorEl.textContent = result.error;
+      errorEl.classList.add('show');
+    }
   },
 
   setupHistoryListeners() {

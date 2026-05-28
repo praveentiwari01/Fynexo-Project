@@ -98,6 +98,12 @@ const Auth = {
     return !!localStorage.getItem('mm_token') || localStorage.getItem('mm_is_guest') === 'true';
   },
 
+  async deleteAccount(password) {
+    const result = await apiRequest('DELETE', '/api/auth/account', { password });
+    if (result.ok) return { success: true };
+    return { success: false, error: result.data.error || 'Failed to delete account' };
+  },
+
   protect() {
     if (!this.isAuthenticated()) {
       window.location.href = 'login.html';

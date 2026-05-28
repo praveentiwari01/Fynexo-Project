@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Expense = require('../models/Expense');
+const IncomeEntry = require('../models/IncomeEntry');
+const Investment = require('../models/Investment');
+const Goal = require('../models/Goal');
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -94,5 +98,39 @@ exports.updateAvatar = async (req, res) => {
     res.json({ avatar: user.avatar });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ error: 'Password is required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const valid = await user.comparePassword(password);
+    if (!valid) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    await Promise.all([
+      Expense.deleteMany({ userId: user._id }),
+      IncomeEntry.deleteMany({ userId: user._id }),
+      Investment.deleteMany({ userId: user._id }),
+      Goal.deleteMany({ userId: user._id })
+    ]);
+
+    await User.findByIdAndDelete(user._id);
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    console.error('Delete account error:', err.message);
+    res.status(500).json({ error: 'Server error during account deletion' });
   }
 };

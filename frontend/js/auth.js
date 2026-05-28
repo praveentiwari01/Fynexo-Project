@@ -1,4 +1,4 @@
-const API_BASE = '';
+const API_BASE = 'https://moneymint-project.onrender.com';
 
 async function apiRequest(method, url, body = null) {
   const token = localStorage.getItem('mm_token');

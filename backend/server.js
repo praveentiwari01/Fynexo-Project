@@ -31,6 +31,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
+
+connectDB();
+app.use(cors({
+  origin: "*",
+  credentials: true
+}));
+
 app.listen(PORT, () => {
   console.log(`\n  MoneyMint is running!`);
   console.log(`  `);
@@ -38,5 +45,3 @@ app.listen(PORT, () => {
   console.log(`  Dev:     http://localhost:${PORT}\n`);
 });
 
-const cors = require("cors");
-app.use(cors());

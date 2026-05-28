@@ -34,14 +34,14 @@
 .sidebar-brand-icon {
   width: 36px;
   height: 36px;
-  background: var(--primary);
   border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 18px;
+  object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-brand-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
 }
 
 .sidebar-brand-text {

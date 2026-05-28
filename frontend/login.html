@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In — Fynexo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2322C55E'/><stop offset='1' stop-color='%2314B8A6'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='%230F172A'/><rect x='4' y='4' width='92' height='92' rx='18' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1.5'/><path d='M10 90 C10 50, 42 20, 80 14' stroke='url(%23g)' stroke-width='2' fill='none' opacity='0.45' stroke-linecap='round'/><path d='M28 80 L28 30 L22 30 L34 14 L46 30 L40 30 L40 80 Z' fill='url(%23g)'/><rect x='40' y='32' width='26' height='10' rx='3' fill='url(%23g)'/><rect x='28' y='52' width='22' height='10' rx='3' fill='url(%23g)'/><rect x='62' y='72' width='6' height='12' rx='2' fill='url(%23g)' opacity='0.85'/><rect x='72' y='66' width='6' height='18' rx='2' fill='url(%23g)' opacity='0.85'/><rect x='82' y='58' width='6' height='26' rx='2' fill='url(%23g)' opacity='0.85'/><path d='M78 14 L80 18 L84 20 L80 22 L78 26 L76 22 L72 20 L76 18 Z' fill='white' opacity='0.8'/><circle cx='62' cy='38' r='1.5' fill='white' opacity='0.5'/></svg>">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <style>
@@ -66,14 +67,8 @@
     .auth-logo-icon {
       width: 40px;
       height: 40px;
-      background: var(--primary);
       border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 800;
-      font-size: 20px;
+      object-fit: cover;
     }
 
     .auth-logo-text {
@@ -192,7 +187,7 @@
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-logo">
-          <div class="auth-logo-icon">F</div>
+          <img src="logo.png" alt="Fynexo" class="auth-logo-icon">
           <div class="auth-logo-text">Fynexo</div>
         </div>
         <div class="auth-header">

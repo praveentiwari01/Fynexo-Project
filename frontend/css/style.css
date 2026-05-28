@@ -703,7 +703,8 @@ button {
   50% { box-shadow: 0 0 60px rgba(46,204,113,0.15); transform: scale(1.03); }
 }
 
-.loading-icon svg {
+.loading-icon svg,
+.loading-icon img {
   width: 36px;
   height: 36px;
   color: #2ecc71;

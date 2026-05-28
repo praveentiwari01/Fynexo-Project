@@ -166,16 +166,17 @@ const App = {
     const greetingEl = document.getElementById('greetingText');
     if (greetingEl) {
       const hours = new Date().getHours();
+      const emoji = hours < 12 ? '☀️' : hours < 17 ? '🌤️' : '🌙';
       const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
       const user = Auth.getCurrentUser();
       if (user && user.then) {
         user.then(u => {
           const name = u?.isGuest ? 'there' : (u?.name || 'there').split(' ')[0];
-          greetingEl.textContent = `${greeting}, ${name} 👋`;
+          greetingEl.textContent = `${greeting}, ${name} ${emoji}`;
         });
       } else {
         const name = user?.isGuest ? 'there' : (user?.name || 'there').split(' ')[0];
-        greetingEl.textContent = `${greeting}, ${name} 👋`;
+        greetingEl.textContent = `${greeting}, ${name} ${emoji}`;
       }
     }
 

@@ -37,3 +37,6 @@ app.listen(PORT, () => {
   console.log(`  Local:   http://localhost:${PORT}`);
   console.log(`  Dev:     http://localhost:${PORT}\n`);
 });
+
+const cors = require("cors");
+app.use(cors());

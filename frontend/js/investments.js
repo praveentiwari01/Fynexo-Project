@@ -1,4 +1,3 @@
-const API_BASE = 'https://moneymint-project.onrender.com';
 const Investments = {
   _cache: [],
 
@@ -76,7 +75,7 @@ const Investments = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`/api/investments/${id}`, {
+      fetch(`${API_BASE}/api/investments/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {

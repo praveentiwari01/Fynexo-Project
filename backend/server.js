@@ -32,11 +32,6 @@ app.use((err, req, res, next) => {
 });
 
 
-connectDB();
-app.use(cors({
-  origin: "*",
-  credentials: true
-}));
 
 app.listen(PORT, () => {
   console.log(`\n  MoneyMint is running!`);

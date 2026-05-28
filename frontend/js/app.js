@@ -34,6 +34,8 @@ const App = {
     } else {
       this._renderUserInfo(user);
     }
+    const label = document.getElementById('profileCurrencyLabel');
+    if (label) label.textContent = Currency.getCurrent().code;
   },
 
   async _renderUserInfo(user) {
@@ -160,6 +162,22 @@ const App = {
     this.animateCounter('totalSavings', totalSavings);
     this.animateCounter('totalInvestments', totalInvestments);
     this.updateNavbarBalance();
+
+    const greetingEl = document.getElementById('greetingText');
+    if (greetingEl) {
+      const hours = new Date().getHours();
+      const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
+      const user = Auth.getCurrentUser();
+      if (user && user.then) {
+        user.then(u => {
+          const name = u?.isGuest ? 'there' : (u?.name || 'there').split(' ')[0];
+          greetingEl.textContent = `${greeting}, ${name} 👋`;
+        });
+      } else {
+        const name = user?.isGuest ? 'there' : (user?.name || 'there').split(' ')[0];
+        greetingEl.textContent = `${greeting}, ${name} 👋`;
+      }
+    }
 
     this.renderRecentTransactions();
     if (typeof renderAllCharts === 'function') renderAllCharts();
@@ -316,6 +334,7 @@ const App = {
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('mm_theme', next);
       updateIcon();
+      this._syncProfileThemeToggle();
 
       if (chartInstances && Object.keys(chartInstances).length > 0) {
         if (typeof renderAllCharts === 'function') renderAllCharts();
@@ -388,6 +407,51 @@ const App = {
         }
         fileInput.value = '';
       });
+    }
+
+    const editBtn = document.getElementById('profileEditBtn');
+    if (editBtn) {
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('profileMenu')?.classList.remove('active');
+        this.openSettings();
+      });
+    }
+
+    const currencyBtn = document.getElementById('profileCurrencyBtn');
+    if (currencyBtn) {
+      currencyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('profileMenu')?.classList.remove('active');
+        this.openSettings();
+      });
+    }
+
+    const themeRow = document.getElementById('profileThemeRow');
+    if (themeRow) {
+      themeRow.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('mm_theme', next);
+        const toggle = document.getElementById('profileThemeToggle');
+        if (toggle) {
+          toggle.classList.toggle('dark');
+        }
+        const menu = document.getElementById('profileMenu');
+        if (menu) menu.classList.remove('active');
+      });
+    }
+
+    this._syncProfileThemeToggle();
+  },
+
+  _syncProfileThemeToggle() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const toggle = document.getElementById('profileThemeToggle');
+    if (toggle) {
+      toggle.classList.toggle('dark', isDark);
     }
   },
 
@@ -569,20 +633,37 @@ const App = {
 
   setupFAB() {
     const fab = document.getElementById('fab');
-    if (!fab) return;
-    fab.addEventListener('click', () => {
-      const tab = this.currentTab;
-      if (tab === 'income') {
-        openIncomeModal();
-      } else if (tab === 'expenses' || tab === 'dashboard') {
-        openExpenseModal();
-      } else if (tab === 'investments') {
-        openInvestmentModal();
-      } else if (tab === 'goals') {
-        openGoalModal();
-      } else {
-        openExpenseModal();
+    const menu = document.getElementById('fabMenu');
+    const container = document.getElementById('fabContainer');
+    if (!fab || !menu) return;
+
+    const toggleMenu = (force) => {
+      const isActive = menu.classList.toggle('active', force === undefined ? !menu.classList.contains('active') : force);
+      fab.style.transform = isActive ? 'rotate(45deg)' : 'rotate(0deg)';
+    };
+
+    fab.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (container && !container.contains(e.target)) {
+        toggleMenu(false);
       }
+    });
+
+    menu.querySelectorAll('.fab-menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        toggleMenu(false);
+        const action = item.dataset.action;
+        switch (action) {
+          case 'income': openIncomeModal(); break;
+          case 'expense': openExpenseModal(); break;
+          case 'investment': openInvestmentModal(); break;
+          case 'goal': openGoalModal(); break;
+        }
+      });
     });
   },
 
@@ -797,6 +878,8 @@ const App = {
     const currencySelect = document.getElementById('settingsCurrency');
     if (currencySelect) {
       Currency.set(currencySelect.value);
+      const label = document.getElementById('profileCurrencyLabel');
+      if (label) label.textContent = Currency.getCurrent().code;
     }
 
     this.closeSettings();
@@ -981,6 +1064,11 @@ function renderBudgets() {
     return;
   }
 
+  const categoryIcons = {
+    Food: 'utensils-crossed', Travel: 'plane', Shopping: 'shopping-bag',
+    Bills: 'receipt', Entertainment: 'clapperboard', Others: 'more-horizontal'
+  };
+
   let html = '';
   for (const cat of defaultCategories) {
     const limit = budgets[cat];
@@ -988,22 +1076,39 @@ function renderBudgets() {
     const totalSpent = spent[cat] || 0;
     const percent = Math.min((totalSpent / limit) * 100, 100);
     const isOver = totalSpent > limit;
+    const remaining = Math.max(limit - totalSpent, 0);
+    const catColor = Utils.getCategoryColor(cat);
+
+    const ringColor = isOver ? '#ef4444' : percent >= 90 ? '#ef4444' : percent >= 70 ? '#f59e0b' : '#10b981';
+    const circ = 2 * Math.PI * 40;
+    const offset = circ - (percent / 100) * circ;
 
     html += `
       <div class="card budget-card">
-        <div class="budget-header">
-          <span class="budget-category">
-            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${Utils.getCategoryColor(cat)};margin-right:8px"></span>
-            ${cat}
-          </span>
-          <span class="budget-amount">${Utils.formatCurrency(totalSpent)} / ${Utils.formatCurrency(limit)}</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-bar-fill ${isOver ? 'danger' : percent > 80 ? 'warning' : ''}" style="width:${percent}%"></div>
-        </div>
-        <div class="budget-stats">
-          <span>${percent.toFixed(0)}% used</span>
-          ${isOver ? '<span class="budget-warning">Budget exceeded!</span>' : `<span>${Utils.formatCurrency(limit - totalSpent)} remaining</span>`}
+        <div style="display:flex;align-items:center;gap:16px;padding:16px">
+          <div style="position:relative;width:90px;height:90px;flex-shrink:0">
+            <svg width="90" height="90" viewBox="0 0 108 108">
+              <circle cx="54" cy="54" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle cx="54" cy="54" r="40" fill="none" stroke="${ringColor}" stroke-width="8"
+                stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+                stroke-linecap="round" transform="rotate(-90,54,54)"
+                style="transition: stroke-dashoffset 0.8s ease"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span style="font-size:11px;color:var(--text-lighter)">${percent.toFixed(0)}%</span>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <i data-lucide="${categoryIcons[cat] || 'circle'}" style="width:16px;height:16px;color:${catColor}"></i>
+              <span class="budget-category">${cat}</span>
+              ${isOver ? '<span class="badge badge-red">Exceeded</span>' : percent >= 90 ? '<span class="badge badge-yellow">Almost full</span>' : ''}
+            </div>
+            <div style="font-size:13px;color:var(--text)">${Utils.formatCurrency(totalSpent)} <span style="color:var(--text-lighter)">/ ${Utils.formatCurrency(limit)}</span></div>
+            <div style="font-size:12px;margin-top:2px;color:${isOver ? 'var(--danger)' : 'var(--primary)'}">
+              ${isOver ? `<span style="color:var(--danger)">⚠ Exceeded by ${Utils.formatCurrency(totalSpent - limit)}</span>` : `${Utils.formatCurrency(remaining)} remaining`}
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -1025,6 +1130,8 @@ function renderBudgets() {
       <button class="btn btn-outline btn-sm" onclick="openBudgetModal()">Manage Budgets</button>
     </div>
   `;
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function openBudgetModal() {

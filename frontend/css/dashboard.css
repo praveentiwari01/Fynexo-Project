@@ -672,6 +672,48 @@
   color: var(--danger);
 }
 
+.profile-menu-item .profile-theme-toggle {
+  margin-left: auto;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--text-lighter);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.profile-menu-item .profile-theme-toggle.dark {
+  background: var(--primary);
+}
+
+.profile-menu-item .profile-theme-toggle .profile-theme-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.profile-menu-item .profile-theme-toggle.dark .profile-theme-knob {
+  transform: translateX(16px);
+}
+
+.profile-menu-item .profile-currency-code {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-lighter);
+  background: var(--border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
 .profile-menu-divider {
   height: 1px;
   background: var(--border);
@@ -715,7 +757,34 @@
   display: flex;
   flex-direction: column;
   padding: 24px;
+  position: relative;
+  overflow: hidden;
 }
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+.summary-card-icon.green ~ .summary-card-label,
+.summary-card-icon.green ~ .summary-card-value,
+.summary-card-icon.green ~ .summary-card-change { position: relative; z-index: 1; }
+
+.summary-card-icon.green ~ .summary-card-label::before { display: none; }
+
+/* Add gradient overlays per summary card type via adjacent sibling simulation */
+/* Using data attributes approach via the icon sibling */
+.summary-card:has(.summary-card-icon.green)::before { background: radial-gradient(circle, #2ecc71, transparent 70%); }
+.summary-card:has(.summary-card-icon.red)::before { background: radial-gradient(circle, #ef4444, transparent 70%); }
+.summary-card:has(.summary-card-icon.blue)::before { background: radial-gradient(circle, #3b82f6, transparent 70%); }
+.summary-card:has(.summary-card-icon.yellow)::before { background: radial-gradient(circle, #f59e0b, transparent 70%); }
 
 .summary-card-icon {
   width: 44px;
@@ -761,6 +830,61 @@
 
 .summary-card-change.positive { color: var(--success); }
 .summary-card-change.negative { color: var(--danger); }
+
+/* Greeting Card */
+.greeting-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, var(--primary-light), transparent 70%);
+  border: 1px solid rgba(46, 204, 113, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.greeting-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(46, 204, 113, 0.06);
+  pointer-events: none;
+}
+
+.greeting-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.greeting-sub {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.greeting-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(46, 204, 113, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.greeting-icon .lucide {
+  width: 26px;
+  height: 26px;
+  color: var(--primary);
+}
 
 /* Dashboard Grid */
 .dashboard-grid-2 {
@@ -1122,6 +1246,78 @@
   height: 24px;
 }
 
+/* FAB Speed Dial */
+.fab-container {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.fab-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab-menu.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.fab-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.fab-menu-item:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  border-color: var(--primary);
+}
+
+.fab-menu-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.fab-menu-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fab-container .fab {
+  position: relative;
+  bottom: auto;
+  right: auto;
+}
+
 /* Settings theme toggle */
 .settings-theme-toggle {
   width: 48px;
@@ -1313,5 +1509,21 @@
 
 #monthlySpendingCard tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Circular progress ring animation */
+.budget-card svg circle:last-child {
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.budget-card .badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* Heatmap legend */
+#heatmapCalendar .chart-loading {
+  z-index: 1;
 }
 

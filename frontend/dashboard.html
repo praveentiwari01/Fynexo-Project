@@ -157,6 +157,23 @@
               </div>
               <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
               <div class="profile-menu-divider"></div>
+              <div class="profile-menu-item" id="profileEditBtn">
+                <i data-lucide="user-cog" style="width:16px;height:16px"></i>
+                Edit Profile
+              </div>
+              <div class="profile-menu-item" id="profileCurrencyBtn">
+                <i data-lucide="dollar-sign" style="width:16px;height:16px"></i>
+                <span>Currency</span>
+                <span class="profile-currency-code" id="profileCurrencyLabel">USD</span>
+              </div>
+              <div class="profile-menu-item" id="profileThemeRow" style="cursor:default">
+                <i data-lucide="moon" style="width:16px;height:16px"></i>
+                <span>Dark Mode</span>
+                <div class="profile-theme-toggle" id="profileThemeToggle">
+                  <div class="profile-theme-knob"></div>
+                </div>
+              </div>
+              <div class="profile-menu-divider"></div>
               <div class="profile-menu-item danger" id="logoutBtn">
                 <i data-lucide="log-out" style="width:16px;height:16px"></i>
                 Sign Out
@@ -175,6 +192,16 @@
             <div>
               <h2>Dashboard</h2>
               <p>Your financial summary at a glance</p>
+            </div>
+          </div>
+
+          <div class="greeting-card card" id="dashboardGreeting">
+            <div>
+              <div class="greeting-text" id="greetingText">Good Morning! 👋</div>
+              <div class="greeting-sub" id="greetingSub">Track your money smarter today.</div>
+            </div>
+            <div class="greeting-icon">
+              <i data-lucide="sparkles"></i>
             </div>
           </div>
 
@@ -234,16 +261,16 @@
                 <canvas id="monthlyBarChart"></canvas>
               </div>
             </div>
-            <div class="card">
+            <div class="card chart-card">
               <div class="card-header">
                 <div>
-                  <div class="card-title">Savings Growth</div>
-                  <div class="card-subtitle">Projected savings trend</div>
+                  <div class="card-title">Expense by Category</div>
+                  <div class="card-subtitle">Where your money goes</div>
                 </div>
               </div>
               <div class="chart-container">
                 <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
-                <canvas id="savingsLineChart"></canvas>
+                <canvas id="dashboardExpensePieChart"></canvas>
               </div>
             </div>
           </div>
@@ -277,6 +304,32 @@
                     Analyzing your financial data.
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Savings Growth</div>
+                  <div class="card-subtitle">Projected savings trend</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="savingsLineChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Spending Heatmap</div>
+                  <div class="card-subtitle">Daily spending intensity</div>
+                </div>
+              </div>
+              <div class="chart-container" id="dashboardHeatmap" style="min-height:260px">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
               </div>
             </div>
           </div>
@@ -410,7 +463,7 @@
             </button>
           </div>
 
-          <div class="dashboard-grid-2">
+          <div class="dashboard-grid-3">
             <div class="card chart-card">
               <div class="card-header">
                 <div class="card-title">Expense by Category</div>
@@ -421,6 +474,61 @@
                 <canvas id="expensePieChart"></canvas>
               </div>
             </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Weekly Spending</div>
+                <div class="card-subtitle">Last 4 weeks trend</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="weeklySpendingChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Income vs Expense</div>
+                <div class="card-subtitle">Monthly comparison</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="incomeVsExpenseChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-3">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Savings Rate</div>
+                <div class="card-subtitle">Overall savings percentage</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="savingsRateChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Top Spending Categories</div>
+                <div class="card-subtitle">Highest to lowest</div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="topCategoryChart"></canvas>
+              </div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title">Spending Heatmap</div>
+                <div class="card-subtitle">Daily spending intensity</div>
+              </div>
+              <div class="chart-container" id="heatmapCalendar" style="min-height:260px">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
             <div class="card chart-card">
               <div class="card-header">
                 <div class="card-title">Monthly Expenses</div>
@@ -438,83 +546,36 @@
                 <canvas id="monthlyBarChartA"></canvas>
               </div>
             </div>
-          </div>
-
-          <div class="dashboard-grid-2">
-            <div class="card chart-card">
+            <div class="card" id="monthlySpendingCard">
               <div class="card-header">
-                <div class="card-title">Income by Category</div>
-                <div class="card-subtitle">Where your money comes from</div>
+                <div>
+                  <div class="card-title">Monthly Spending Breakdown</div>
+                  <div class="card-subtitle">Income vs Expenses per month</div>
+                </div>
               </div>
-              <div class="chart-container">
-                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
-                <canvas id="incomeDoughnutChart"></canvas>
+              <div style="padding:0;overflow:hidden">
+                <table class="list-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Spending</th>
+                      <th>Income</th>
+                      <th>Savings</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthlySpendingTableBody">
+                    <tr>
+                      <td colspan="4">
+                        <div class="empty-state">
+                          <i data-lucide="calendar" class="empty-state-icon" style="width:36px;height:36px"></i>
+                          <h3>No data available</h3>
+                          <p>Add income and expenses to see monthly breakdown.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-            </div>
-            <div class="card chart-card">
-              <div class="card-header">
-                <div class="card-title">Savings Growth</div>
-                <div class="card-subtitle">Projected trajectory</div>
-              </div>
-              <div class="chart-container">
-                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
-                <canvas id="savingsLineChartA"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <div class="dashboard-grid-2">
-            <div class="card chart-card">
-              <div class="card-header">
-                <div class="card-title">Investments by Type</div>
-                <div class="card-subtitle">Portfolio allocation</div>
-              </div>
-              <div class="chart-container">
-                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
-                <canvas id="investmentPieChart"></canvas>
-              </div>
-            </div>
-            <div class="card chart-card">
-              <div class="card-header">
-                <div class="card-title">Investment Growth</div>
-                <div class="card-subtitle">Last 6 months</div>
-              </div>
-              <div class="chart-container">
-                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
-                <canvas id="investmentBarChart"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" id="monthlySpendingCard">
-            <div class="card-header">
-              <div>
-                <div class="card-title">Monthly Spending Breakdown</div>
-                <div class="card-subtitle">Income vs Expenses per month</div>
-              </div>
-            </div>
-            <div style="padding:0;overflow:hidden">
-              <table class="list-table">
-                <thead>
-                  <tr>
-                    <th>Month</th>
-                    <th>Spending</th>
-                    <th>Income</th>
-                    <th>Savings</th>
-                  </tr>
-                </thead>
-                <tbody id="monthlySpendingTableBody">
-                  <tr>
-                    <td colspan="4">
-                      <div class="empty-state">
-                        <i data-lucide="calendar" class="empty-state-icon" style="width:36px;height:36px"></i>
-                        <h3>No data available</h3>
-                        <p>Add income and expenses to see monthly breakdown.</p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
@@ -594,10 +655,30 @@
     </main>
   </div>
 
-  <!-- FAB -->
-  <button class="fab" id="fab" title="Quick Add">
-    <i data-lucide="plus"></i>
-  </button>
+  <!-- FAB Speed Dial -->
+  <div class="fab-container" id="fabContainer">
+    <div class="fab-menu" id="fabMenu">
+      <button class="fab-menu-item" data-action="income" title="Add Income">
+        <span class="fab-menu-icon" style="background:rgba(16,185,129,0.15);color:#10b981">💰</span>
+        <span class="fab-menu-label">Add Income</span>
+      </button>
+      <button class="fab-menu-item" data-action="expense" title="Add Expense">
+        <span class="fab-menu-icon" style="background:rgba(239,68,68,0.15);color:#ef4444">💳</span>
+        <span class="fab-menu-label">Add Expense</span>
+      </button>
+      <button class="fab-menu-item" data-action="investment" title="Add Investment">
+        <span class="fab-menu-icon" style="background:rgba(59,130,246,0.15);color:#3b82f6">📈</span>
+        <span class="fab-menu-label">Add Investment</span>
+      </button>
+      <button class="fab-menu-item" data-action="goal" title="Add Goal">
+        <span class="fab-menu-icon" style="background:rgba(139,92,246,0.15);color:#8b5cf6">🎯</span>
+        <span class="fab-menu-label">Add Goal</span>
+      </button>
+    </div>
+    <button class="fab" id="fab" title="Quick Add">
+      <i data-lucide="plus"></i>
+    </button>
+  </div>
 
   <!-- Delete All Notifications Confirmation Modal -->
   <div class="modal-overlay" id="deleteNotifModal">

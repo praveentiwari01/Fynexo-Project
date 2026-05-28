@@ -161,6 +161,35 @@ const Expenses = {
 
   getLast6Months() {
     return this.getMonths(6);
+  },
+
+  getWeeklyTotals() {
+    const weekly = {};
+    const now = new Date();
+    const fourWeeksAgo = new Date(now);
+    fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 27);
+
+    this.getAll().forEach(e => {
+      const d = new Date(e.date);
+      if (d < fourWeeksAgo) return;
+      const start = new Date(d);
+      start.setDate(d.getDate() - d.getDay());
+      const key = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+      const label = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      weekly[key] = weekly[key] || { label, amount: 0 };
+      weekly[key].amount += e.amount;
+    });
+
+    const result = [];
+    for (let i = 27; i >= 0; i -= 7) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const start = new Date(d);
+      start.setDate(d.getDate() - d.getDay());
+      const key = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+      result.push({ label: weekly[key]?.label || start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), amount: weekly[key]?.amount || 0 });
+    }
+    return result;
   }
 };
 

@@ -105,16 +105,20 @@ const Investments = {
     return monthly;
   },
 
-  getLast6Months() {
+  getMonths(count = 6) {
     const monthly = this.getMonthlyTotals();
     const result = [];
     const now = new Date();
-    for (let i = 5; i >= 0; i--) {
+    for (let i = count - 1; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      result.push({ month: Utils.getMonthName(d.getMonth()), amount: monthly[key] || 0 });
+      result.push({ month: Utils.getMonthName(d.getMonth()), key, amount: monthly[key] || 0 });
     }
     return result;
+  },
+
+  getLast6Months() {
+    return this.getMonths(6);
   }
 };
 

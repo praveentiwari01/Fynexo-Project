@@ -424,7 +424,14 @@
             <div class="card chart-card">
               <div class="card-header">
                 <div class="card-title">Monthly Expenses</div>
-                <div class="card-subtitle">Last 6 months trend</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="card-subtitle" style="font-size:12px">Show:</span>
+                  <select id="timeRangeSelect" class="form-select" style="width:auto;padding:4px 28px 4px 10px;font-size:12px">
+                    <option value="6">Last 6 Months</option>
+                    <option value="3">Last 3 Months</option>
+                    <option value="1">Last 1 Month</option>
+                  </select>
+                </div>
               </div>
               <div class="chart-container">
                 <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
@@ -476,6 +483,38 @@
                 <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
                 <canvas id="investmentBarChart"></canvas>
               </div>
+            </div>
+          </div>
+
+          <div class="card" id="monthlySpendingCard">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Monthly Spending Breakdown</div>
+                <div class="card-subtitle">Income vs Expenses per month</div>
+              </div>
+            </div>
+            <div style="padding:0;overflow:hidden">
+              <table class="list-table">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Spending</th>
+                    <th>Income</th>
+                    <th>Savings</th>
+                  </tr>
+                </thead>
+                <tbody id="monthlySpendingTableBody">
+                  <tr>
+                    <td colspan="4">
+                      <div class="empty-state">
+                        <i data-lucide="calendar" class="empty-state-icon" style="width:36px;height:36px"></i>
+                        <h3>No data available</h3>
+                        <p>Add income and expenses to see monthly breakdown.</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

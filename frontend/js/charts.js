@@ -1,4 +1,26 @@
 const chartInstances = {};
+let selectedMonthRange = 6;
+
+function _setChartEmptyState(canvas, html) {
+  const container = canvas.parentElement;
+  let emptyEl = container.querySelector('.chart-empty-state');
+  if (!emptyEl) {
+    emptyEl = document.createElement('div');
+    emptyEl.className = 'chart-empty-state';
+    container.appendChild(emptyEl);
+  }
+  emptyEl.innerHTML = html;
+  emptyEl.style.display = 'flex';
+  canvas.style.display = 'none';
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function _clearChartEmptyState(canvas) {
+  const container = canvas.parentElement;
+  const emptyEl = container.querySelector('.chart-empty-state');
+  if (emptyEl) emptyEl.style.display = 'none';
+  canvas.style.display = 'block';
+}
 
 function getChartDefaults() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -27,16 +49,16 @@ function createPieChart() {
   const categories = Object.keys(byCategory);
 
   if (!categories.length) {
-    canvas.parentElement.innerHTML = `
+    _setChartEmptyState(canvas, `
       <div class="empty-state" style="height:300px">
         <i data-lucide="pie-chart" class="empty-state-icon" style="width:48px;height:48px"></i>
         <h3>No data yet</h3>
         <p>Add expenses to see the breakdown.</p>
       </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    `);
     return;
   }
+  _clearChartEmptyState(canvas);
 
   const colors = categories.map(c => Utils.getCategoryColor(c));
 
@@ -69,27 +91,27 @@ function createPieChart() {
   });
 }
 
-function createBarChart(canvasId = 'monthlyBarChart', chartKey = 'barChart') {
+function createBarChart(canvasId = 'monthlyBarChart', chartKey = 'barChart', monthCount = 6) {
   destroyChart(chartKey);
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-  const monthlyData = Expenses.getLast6Months();
+  const monthlyData = Expenses.getMonths(monthCount);
   const defaults = getChartDefaults();
 
   const hasData = monthlyData.some(d => d.amount > 0);
   if (!hasData) {
-    canvas.parentElement.innerHTML = `
+    _setChartEmptyState(canvas, `
       <div class="empty-state" style="height:300px">
         <i data-lucide="bar-chart-3" class="empty-state-icon" style="width:48px;height:48px"></i>
         <h3>No data available</h3>
         <p>Add expenses to see your monthly spending overview.</p>
       </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    `);
     return;
   }
+  _clearChartEmptyState(canvas);
 
   chartInstances[chartKey] = new Chart(ctx, {
     type: 'bar',
@@ -159,16 +181,16 @@ function createDoughnutChart() {
   const categories = Object.keys(byCategory);
 
   if (!categories.length) {
-    canvas.parentElement.innerHTML = `
+    _setChartEmptyState(canvas, `
       <div class="empty-state" style="height:300px">
         <i data-lucide="circle" class="empty-state-icon" style="width:48px;height:48px"></i>
         <h3>No income data yet</h3>
         <p>Add income to see the breakdown.</p>
       </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    `);
     return;
   }
+  _clearChartEmptyState(canvas);
 
   const incomeColors = {
     'Salary': '#10b981',
@@ -221,16 +243,16 @@ function createLineChart(canvasId = 'savingsLineChart', chartKey = 'lineChart') 
 
   const hasData = incomeMonthly.some(d => d.amount > 0) || expenseMonthly.some(d => d.amount > 0);
   if (!hasData) {
-    canvas.parentElement.innerHTML = `
+    _setChartEmptyState(canvas, `
       <div class="empty-state" style="height:300px">
         <i data-lucide="trending-up" class="empty-state-icon" style="width:48px;height:48px"></i>
         <h3>No data available</h3>
         <p>Add income and expenses to see your savings growth.</p>
       </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    `);
     return;
   }
+  _clearChartEmptyState(canvas);
 
   let cumulative = 0;
   const savingsData = incomeMonthly.map((d, i) => {
@@ -311,16 +333,16 @@ function createInvestmentPieChart() {
   const types = Object.keys(byType);
 
   if (!types.length) {
-    canvas.parentElement.innerHTML = `
+    _setChartEmptyState(canvas, `
       <div class="empty-state" style="height:300px">
         <i data-lucide="trending-up" class="empty-state-icon" style="width:48px;height:48px"></i>
         <h3>No investments yet</h3>
         <p>Add investments to see your portfolio.</p>
       </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    `);
     return;
   }
+  _clearChartEmptyState(canvas);
 
   const colors = types.map(c => Utils.getCategoryColor(c));
 
@@ -361,6 +383,19 @@ function createInvestmentBarChart() {
   const ctx = canvas.getContext('2d');
   const monthlyData = Investments.getLast6Months();
   const defaults = getChartDefaults();
+
+  const hasData = monthlyData.some(d => d.amount > 0);
+  if (!hasData) {
+    _setChartEmptyState(canvas, `
+      <div class="empty-state" style="height:300px">
+        <i data-lucide="trending-up" class="empty-state-icon" style="width:48px;height:48px"></i>
+        <h3>No investments yet</h3>
+        <p>Add investments to see your portfolio growth.</p>
+      </div>
+    `);
+    return;
+  }
+  _clearChartEmptyState(canvas);
 
   chartInstances.investmentBarChart = new Chart(ctx, {
     type: 'bar',
@@ -503,6 +538,61 @@ function renderInsights() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+function renderMonthlySpendingTable(monthCount) {
+  const container = document.getElementById('monthlySpendingTableBody');
+  if (!container) return;
+
+  const expenseMonths = Expenses.getMonths(monthCount);
+  const incomeMonths = Income.getMonths(monthCount);
+
+  const hasData = expenseMonths.some(d => d.amount > 0) || incomeMonths.some(d => d.amount > 0);
+
+  if (!hasData) {
+    container.innerHTML = `
+      <tr>
+        <td colspan="4">
+          <div class="empty-state">
+            <i data-lucide="calendar" class="empty-state-icon" style="width:36px;height:36px"></i>
+            <h3>No data available</h3>
+            <p>Add income and expenses to see monthly breakdown.</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < monthCount; i++) {
+    const expense = expenseMonths[i]?.amount || 0;
+    const income = incomeMonths[i]?.amount || 0;
+    const savings = Math.max(income - expense, 0);
+    const monthLabel = expenseMonths[i]?.month || incomeMonths[i]?.month || '';
+
+    html += `<tr>
+      <td><strong>${monthLabel}</strong></td>
+      <td class="transaction-amount negative">${Utils.formatCurrency(expense)}</td>
+      <td class="transaction-amount positive">${Utils.formatCurrency(income)}</td>
+      <td class="transaction-amount positive">${Utils.formatCurrency(savings)}</td>
+    </tr>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function setupAnalyticsTimeRange() {
+  const selector = document.getElementById('timeRangeSelect');
+  if (!selector) return;
+
+  selector.addEventListener('change', () => {
+    selectedMonthRange = parseInt(selector.value, 10);
+    createBarChart('monthlyBarChartA', 'barChartAnalytics', selectedMonthRange);
+    renderMonthlySpendingTable(selectedMonthRange);
+    hideChartLoadings();
+  });
+}
+
 function renderAllCharts() {
   const defaults = getChartDefaults();
   Chart.defaults.color = defaults.color;
@@ -510,12 +600,13 @@ function renderAllCharts() {
 
   createPieChart();
   createBarChart('monthlyBarChart', 'barChart');
-  createBarChart('monthlyBarChartA', 'barChartAnalytics');
+  createBarChart('monthlyBarChartA', 'barChartAnalytics', selectedMonthRange);
   createDoughnutChart();
   createLineChart('savingsLineChart', 'lineChart');
   createLineChart('savingsLineChartA', 'lineChartAnalytics');
   createInvestmentPieChart();
   createInvestmentBarChart();
+  renderMonthlySpendingTable(selectedMonthRange);
   renderInsights();
   hideChartLoadings();
 }
@@ -524,4 +615,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('expensePieChart') || document.getElementById('monthlyBarChart')) {
     setTimeout(renderAllCharts, 300);
   }
+  setTimeout(setupAnalyticsTimeRange, 300);
 });

@@ -541,7 +541,7 @@ const App = {
     if (enabled && 'Notification' in window && Notification.permission === 'granted') {
       const prefix = type === 'expense' ? 'spent on' : 'received from';
       const body = Utils.formatCurrency(amount) + ' ' + prefix + ' ' + category + ' \u2014 ' + title;
-      new Notification('MoneyMint AI', { body, icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>\uD83C\uDF31</text></svg>' });
+      new Notification('Fynexo', { body, icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>\uD83C\uDF31</text></svg>' });
     } else if (enabled && 'Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
@@ -1016,14 +1016,14 @@ const App = {
     const pdfBtn = document.getElementById('exportPDF');
     if (pdfBtn) {
       pdfBtn.addEventListener('click', () => {
-        exportPDF('MoneyMintAI-Transactions');
+        exportPDF('Fynexo-Transactions');
       });
     }
 
     const reportBtn = document.getElementById('generateReportBtn');
     if (reportBtn) {
       reportBtn.addEventListener('click', () => {
-        exportPDF('MoneyMintAI-Financial-Report');
+        exportPDF('Fynexo-Financial-Report');
       });
     }
   }

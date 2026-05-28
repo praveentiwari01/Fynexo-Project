@@ -1,6 +1,6 @@
-# MoneyMint AI 🍃
+# Fynexo 🍃
 
-**Track Smarter. Invest Better. Powered by AI.** — A modern, responsive personal finance management web application.
+**Smart Finance, Simplified** — A modern, responsive personal finance management web application.
 
 ## Features
 
@@ -39,7 +39,7 @@
 ## Project Structure
 
 ```
-MoneyMintAI/
+fynexo/
 ├── frontend/
 │   ├── index.html          Landing page
 │   ├── login.html          Authentication
@@ -68,4 +68,4 @@ MoneyMintAI/
 ├── package.json
 └── README.md
 ```
-"# MoneyMintAI-Project" 
+"# fynexo-project" 

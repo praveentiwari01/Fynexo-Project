@@ -34,7 +34,7 @@
 .sidebar-brand-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--primary), #8b5cf6);
+  background: var(--primary);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -42,7 +42,6 @@
   color: #fff;
   font-weight: 800;
   font-size: 18px;
-  box-shadow: 0 0 12px rgba(46, 204, 113, 0.25);
 }
 
 .sidebar-brand-text {
@@ -52,10 +51,7 @@
 }
 
 .sidebar-brand-text span {
-  background: linear-gradient(135deg, var(--primary), #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary);
 }
 
 .sidebar-nav {

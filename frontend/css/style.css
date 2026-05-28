@@ -718,10 +718,7 @@ button {
 }
 
 .loading-title span {
-  background: linear-gradient(135deg, #2ecc71, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2ecc71;
 }
 
 .loading-subtitle {

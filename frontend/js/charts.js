@@ -1,3 +1,4 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
 const chartInstances = {};
 
 function getChartDefaults() {

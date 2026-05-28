@@ -1,3 +1,4 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
 const Expenses = {
   _cache: [],
 
@@ -15,7 +16,7 @@ const Expenses = {
     try {
       const token = Auth.getToken();
       if (!token) return;
-      const res = await fetch('/api/expenses', {
+      const res = await fetch(`${API_BASE}/api/expenses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -52,7 +53,7 @@ const Expenses = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch('/api/expenses', {
+      fetch(`${API_BASE}/api/expenses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title: data.title, amount: data.amount, category: data.category, date: data.date })
@@ -79,7 +80,7 @@ const Expenses = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`/api/expenses/${id}`, {
+      fetch(`${API_BASE}/api/expenses/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
@@ -101,7 +102,7 @@ const Expenses = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`/api/expenses/${id}`, {
+      fetch(`${API_BASE}/api/expenses/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {

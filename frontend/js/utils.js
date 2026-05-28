@@ -1,3 +1,4 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
 const Currency = {
   list: [
     { code: 'USD', symbol: '$', locale: 'en-US', name: 'US Dollar' },

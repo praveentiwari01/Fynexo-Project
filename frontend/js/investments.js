@@ -1,3 +1,4 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
 const Investments = {
   _cache: [],
 
@@ -15,7 +16,7 @@ const Investments = {
     try {
       const token = Auth.getToken();
       if (!token) return;
-      const res = await fetch('/api/investments', {
+      const res = await fetch(`${API_BASE}/api/investments`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -52,7 +53,7 @@ const Investments = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch('/api/investments', {
+      fetch(`${API_BASE}/api/investments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ investmentName: data.investmentName, amount: data.amount, type: data.type, date: data.date })

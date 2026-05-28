@@ -1,3 +1,5 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
+
 const App = {
   currentTab: 'dashboard',
 
@@ -817,10 +819,10 @@ const App = {
       const token = Auth.getToken();
       if (token) {
         await Promise.all([
-          fetch('/api/expenses/all', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
-          fetch('/api/income/all', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
-          fetch('/api/investments/all', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
-          fetch('/api/goals/all', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+          fetch(`${API_BASE}/api/expenses/all`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_BASE}/api/income/all`,{ method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_BASE}/api/investments/all`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_BASE}/api/goals/all`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
         ]);
       }
       Storage.remove('budgets');

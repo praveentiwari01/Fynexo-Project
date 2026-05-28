@@ -1,3 +1,4 @@
+const API_BASE = 'https://moneymint-project.onrender.com';
 const Goals = {
   _cache: [],
 
@@ -14,7 +15,7 @@ const Goals = {
     try {
       const token = Auth.getToken();
       if (!token) return;
-      const res = await fetch('/api/goals', {
+      const res = await fetch(`${API_BASE}/api/goals`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -50,7 +51,7 @@ const Goals = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch('/api/goals', {
+      fetch(`${API_BASE}/api/goals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
@@ -76,7 +77,7 @@ const Goals = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`/api/goals/${id}`, {
+      fetch(`${API_BASE}/api/goals`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
@@ -97,7 +98,7 @@ const Goals = {
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`/api/goals/${id}`, {
+      fetch(`${API_BASE}/api/goals`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {

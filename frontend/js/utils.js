@@ -1,4 +1,4 @@
-const API_BASE = 'https://fynexo.onrender.com';
+const API_BASE = 'https://moneymint-project.onrender.com';
 
 const Currency = {
   list: [

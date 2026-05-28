@@ -30,7 +30,7 @@ const Expenses = {
     return this._cache;
   },
 
-  add(data) {
+  async add(data) {
     const expense = {
       id: Utils.generateId(),
       title: data.title,
@@ -46,24 +46,23 @@ const Expenses = {
       const expenses = Storage.get(`expenses_${session.email}`, []);
       expenses.push(expense);
       Storage.set(`expenses_${session.email}`, expenses);
-      this._sync();
+      await this._sync();
       return expense;
     }
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`${API_BASE}/api/expenses`, {
+      const res = await fetch(`${API_BASE}/api/expenses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title: data.title, amount: data.amount, category: data.category, date: data.date })
-      }).then(res => {
-        if (res.ok) this._sync();
       });
+      if (res.ok) await this._sync();
     }
     return expense;
   },
 
-  update(id, data) {
+  async update(id, data) {
     const isGuest = localStorage.getItem('mm_is_guest') === 'true';
     if (isGuest) {
       const session = JSON.parse(localStorage.getItem('mm_session') || '{}');
@@ -73,19 +72,18 @@ const Expenses = {
         expenses[index] = { ...expenses[index], ...data, amount: parseFloat(data.amount) };
         Storage.set(`expenses_${session.email}`, expenses);
       }
-      this._sync();
+      await this._sync();
       return;
     }
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`${API_BASE}/api/expenses/${id}`, {
+      const res = await fetch(`${API_BASE}/api/expenses/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
-      }).then(res => {
-        if (res.ok) this._sync();
       });
+      if (res.ok) await this._sync();
     }
   },
 
@@ -277,7 +275,7 @@ function closeExpenseModal() {
   if (modal) modal.classList.remove('active');
 }
 
-function saveExpense() {
+async function saveExpense() {
   const name = document.getElementById('expenseName').value.trim();
   const amount = document.getElementById('expenseAmount').value;
   const category = document.getElementById('expenseCategory').value;
@@ -289,21 +287,19 @@ function saveExpense() {
   }
 
   if (expenseEditId) {
-    Expenses.update(expenseEditId, { title: name, amount, category, date });
+    await Expenses.update(expenseEditId, { title: name, amount, category, date });
     Toast.success('Expense updated successfully!');
   } else {
-    Expenses.add({ title: name, amount, category, date });
+    await Expenses.add({ title: name, amount, category, date });
     Toast.success('Expense added successfully!');
     App.addNotification('expense', name, amount, category);
   }
 
   closeExpenseModal();
-  setTimeout(() => {
-    renderExpenses();
-    updateDashboardSummary();
-    if (typeof renderAllCharts === 'function') renderAllCharts();
-    if (typeof renderBudgets === 'function') renderBudgets();
-  }, 200);
+  renderExpenses();
+  updateDashboardSummary();
+  if (typeof renderAllCharts === 'function') renderAllCharts();
+  if (typeof renderBudgets === 'function') renderBudgets();
 }
 
 function editExpense(id) {

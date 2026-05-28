@@ -420,6 +420,7 @@
   top: calc(100% + 8px);
   right: 0;
   width: 340px;
+  max-width: 90vw;
   max-height: 420px;
   background: var(--bg-card-solid);
   border: 1px solid var(--border);
@@ -427,8 +428,10 @@
   box-shadow: var(--shadow-lg);
   display: none;
   animation: slideDown 0.2s ease;
-  z-index: 100;
+  z-index: 9999;
   overflow: hidden;
+  overflow-x: hidden;
+  word-wrap: break-word;
   flex-direction: column;
 }
 

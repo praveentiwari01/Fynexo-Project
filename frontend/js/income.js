@@ -30,7 +30,7 @@ const Income = {
     return this._cache;
   },
 
-  add(data) {
+  async add(data) {
     const entry = {
       id: Utils.generateId(),
       title: data.title,
@@ -46,24 +46,23 @@ const Income = {
       const income = Storage.get(`income_${session.email}`, []);
       income.push(entry);
       Storage.set(`income_${session.email}`, income);
-      this._sync();
+      await this._sync();
       return entry;
     }
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`${API_BASE}/api/income`, {
+      const res = await fetch(`${API_BASE}/api/income`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title: data.title, amount: data.amount, category: data.category, date: data.date })
-      }).then(res => {
-        if (res.ok) this._sync();
       });
+      if (res.ok) await this._sync();
     }
     return entry;
   },
 
-  update(id, data) {
+  async update(id, data) {
     const isGuest = localStorage.getItem('mm_is_guest') === 'true';
     if (isGuest) {
       const session = JSON.parse(localStorage.getItem('mm_session') || '{}');
@@ -73,19 +72,18 @@ const Income = {
         income[index] = { ...income[index], ...data, amount: parseFloat(data.amount) };
         Storage.set(`income_${session.email}`, income);
       }
-      this._sync();
+      await this._sync();
       return;
     }
 
     const token = Auth.getToken();
     if (token) {
-      fetch(`${API_BASE}/api/income/${id}`, {
+      const res = await fetch(`${API_BASE}/api/income/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
-      }).then(res => {
-        if (res.ok) this._sync();
       });
+      if (res.ok) await this._sync();
     }
   },
 
@@ -262,7 +260,7 @@ function closeIncomeModal() {
   if (modal) modal.classList.remove('active');
 }
 
-function saveIncome() {
+async function saveIncome() {
   const name = document.getElementById('incomeName').value.trim();
   const amount = document.getElementById('incomeAmount').value;
   const category = document.getElementById('incomeCategory').value;
@@ -274,20 +272,18 @@ function saveIncome() {
   }
 
   if (incomeEditId) {
-    Income.update(incomeEditId, { title: name, amount, category, date });
+    await Income.update(incomeEditId, { title: name, amount, category, date });
     Toast.success('Income updated successfully!');
   } else {
-    Income.add({ title: name, amount, category, date });
+    await Income.add({ title: name, amount, category, date });
     Toast.success('Income added successfully!');
     App.addNotification('income', name, amount, category);
   }
 
   closeIncomeModal();
-  setTimeout(() => {
-    renderIncomes();
-    updateDashboardSummary();
-    if (typeof renderAllCharts === 'function') renderAllCharts();
-  }, 200);
+  renderIncomes();
+  updateDashboardSummary();
+  if (typeof renderAllCharts === 'function') renderAllCharts();
 }
 
 function editIncome(id) {

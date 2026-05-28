@@ -308,7 +308,7 @@
             </div>
           </div>
 
-          <div class="dashboard-grid-2">
+            <div class="dashboard-grid-2">
             <div class="card">
               <div class="card-header">
                 <div>
@@ -330,6 +330,52 @@
               </div>
               <div class="chart-container" id="dashboardHeatmap" style="min-height:260px">
                 <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-2">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Income vs Expenses</div>
+                  <div class="card-subtitle">Monthly comparison</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <div class="chart-loading"><div class="chart-loading-spinner"></div></div>
+                <canvas id="dashboardIncomeVsExpenseChart"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Monthly Spending Breakdown</div>
+                  <div class="card-subtitle">Income vs Expenses per month</div>
+                </div>
+              </div>
+              <div style="padding:0;overflow:hidden">
+                <table class="list-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Spending</th>
+                      <th>Income</th>
+                      <th>Savings</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardMonthlySpendingTableBody">
+                    <tr>
+                      <td colspan="4">
+                        <div class="empty-state">
+                          <i data-lucide="calendar" class="empty-state-icon" style="width:36px;height:36px"></i>
+                          <h3>No data available</h3>
+                          <p>Add income and expenses to see monthly breakdown.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

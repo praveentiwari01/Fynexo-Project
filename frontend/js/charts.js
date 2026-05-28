@@ -234,9 +234,9 @@ function createWeeklyBarChart() {
   });
 }
 
-function createIncomeVsExpenseChart() {
-  destroyChart('incomeVsExpense');
-  const canvas = document.getElementById('incomeVsExpenseChart');
+function createIncomeVsExpenseChart(canvasId = 'incomeVsExpenseChart', chartKey = 'incomeVsExpense') {
+  destroyChart(chartKey);
+  const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
@@ -257,7 +257,7 @@ function createIncomeVsExpenseChart() {
   }
   _clearChartEmptyState(canvas);
 
-  chartInstances.incomeVsExpense = new Chart(ctx, {
+  chartInstances[chartKey] = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: incomeMonths.map(d => d.month),
@@ -713,8 +713,8 @@ function renderInsights() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-function renderMonthlySpendingTable(monthCount) {
-  const container = document.getElementById('monthlySpendingTableBody');
+function renderMonthlySpendingTable(monthCount, containerId = 'monthlySpendingTableBody') {
+  const container = document.getElementById(containerId);
   if (!container) return;
 
   const expenseMonths = Expenses.getMonths(monthCount);
@@ -777,6 +777,7 @@ function renderAllCharts() {
   createPieChart('dashboardExpensePieChart', 'dashboardPieChart');
   createWeeklyBarChart();
   createIncomeVsExpenseChart();
+  createIncomeVsExpenseChart('dashboardIncomeVsExpenseChart', 'dashboardIncomeVsExpense');
   createSavingsRateChart();
   createTopCategoryChart();
   createHeatmapCalendar();
@@ -785,6 +786,7 @@ function renderAllCharts() {
   createBarChart('monthlyBarChartA', 'barChartAnalytics', selectedMonthRange);
   createLineChart('savingsLineChart', 'lineChart');
   renderMonthlySpendingTable(selectedMonthRange);
+  renderMonthlySpendingTable(6, 'dashboardMonthlySpendingTableBody');
   renderInsights();
   hideChartLoadings();
 }

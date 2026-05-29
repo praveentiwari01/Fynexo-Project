@@ -158,21 +158,28 @@ function renderInvestments(filter = 'all', search = '') {
     return;
   }
 
+  const catClass = (cat) => {
+    const m = {
+      'food':'food','travel':'travel','transport':'transport','shopping':'shopping',
+      'health':'health','entertainment':'entertainment','education':'education',
+      'investment':'investment','salary':'salary','freelance':'freelance','bills':'bills',
+      'others':'others','other':'other','stocks':'stocks','mutual funds':'mutual',
+      'crypto':'crypto','gold':'gold','sip':'sip','fixed deposit':'fixed'
+    };
+    return m[(cat||'').toLowerCase()] || 'others';
+  };
+
   tbody.innerHTML = investments.map(i => `
     <tr>
-      <td>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="badge badge-${getInvestmentBadgeType(i.type)}">${i.type}</span>
-          <span>${i.investmentName}</span>
-        </div>
+      <td class="col-title" data-label="Name">
+        <span style="margin-right:8px">${i.investmentName}</span>
+        <span class="cat-badge ${catClass(i.type)}">${i.type}</span>
       </td>
-      <td>${Utils.formatCurrency(i.amount)}</td>
-      <td>${Utils.formatDate(i.date)}</td>
-      <td>
-        <span class="transaction-amount positive">${Utils.formatCurrency(i.amount)}</span>
-      </td>
-      <td>
-        <div class="actions">
+      <td class="col-amount" data-label="Amount"><span class="inv">${Utils.formatCurrency(i.amount)}</span></td>
+      <td class="col-date" data-label="Date">${Utils.formatDate(i.date)}</td>
+      <td class="col-amount" data-label="Value"><span class="inv">${Utils.formatCurrency(i.amount)}</span></td>
+      <td class="col-actions" data-label="Actions">
+        <div class="actions" style="justify-content:center">
           <button class="delete" onclick="deleteInvestment('${i.id}')" title="Delete">
             <i data-lucide="trash-2" style="width:16px;height:16px"></i>
           </button>
@@ -183,18 +190,6 @@ function renderInvestments(filter = 'all', search = '') {
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   updateInvestmentSummary();
-}
-
-function getInvestmentBadgeType(type) {
-  const map = {
-    'Stocks': 'blue',
-    'Mutual Funds': 'purple',
-    'Crypto': 'yellow',
-    'Gold': 'orange',
-    'SIP': 'green',
-    'Fixed Deposit': 'blue'
-  };
-  return map[type] || 'blue';
 }
 
 function updateInvestmentSummary() {

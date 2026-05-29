@@ -1021,39 +1021,197 @@
   min-width: 160px;
 }
 
+/* ===== Shared Table Layout (Income, Expense, Investment) ===== */
 .list-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
-.list-table th {
-  text-align: left;
-  padding: 12px 16px;
+/* Column widths for 6-column tables (expense/income) */
+.list-table.cols-6 thead th:nth-child(1) { width: 22%; }
+.list-table.cols-6 thead th:nth-child(2) { width: 15%; }
+.list-table.cols-6 thead th:nth-child(3) { width: 18%; }
+.list-table.cols-6 thead th:nth-child(4) { width: 18%; }
+.list-table.cols-6 thead th:nth-child(5) { width: 15%; }
+.list-table.cols-6 thead th:nth-child(6) { width: 12%; }
+
+/* Column widths for 5-column tables (investments) */
+.list-table.cols-5 thead th:nth-child(1) { width: 22%; }
+.list-table.cols-5 thead th:nth-child(2) { width: 18%; }
+.list-table.cols-5 thead th:nth-child(3) { width: 18%; }
+.list-table.cols-5 thead th:nth-child(4) { width: 20%; }
+.list-table.cols-5 thead th:nth-child(5) { width: 12%; }
+
+.list-table thead th {
+  padding: 14px 12px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: var(--text-lighter);
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  user-select: none;
-  transition: color var(--transition);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  text-align: center;
 }
 
-.list-table th:hover {
-  color: var(--text);
-}
+.list-table thead th:first-child { text-align: left; }
 
-.list-table td {
-  padding: 14px 16px;
+.list-table tbody td {
+  padding: 14px 12px;
   font-size: 13px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  vertical-align: middle;
+  text-align: center;
 }
 
-.list-table tr:hover td {
+/* Column-specific alignments */
+.list-table tbody td.col-title { text-align: left; }
+.list-table tbody td.col-amount { text-align: center; }
+.list-table tbody td.col-category { text-align: center; }
+.list-table tbody td.col-date { text-align: center; }
+.list-table tbody td.col-status { text-align: center; }
+.list-table tbody td.col-actions { text-align: center; }
+
+/* Title cell */
+.list-table tbody td.col-title {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Amount */
+.list-table tbody td.col-amount {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.list-table tbody td.col-amount .neg { color: #dc2626; }
+.list-table tbody td.col-amount .pos { color: #16a34a; }
+.list-table tbody td.col-amount .inv { color: #2563eb; }
+
+/* Row hover */
+.list-table tbody tr {
+  transition: background 0.2s ease;
+}
+.list-table tbody tr:hover {
   background: var(--border);
 }
+
+/* ===== History Table overrides ===== */
+.list-table.history-table {
+  table-layout: auto;
+}
+.list-table.history-table thead th:first-child { text-align: left; }
+.list-table.history-table thead th:nth-child(2) { text-align: center; }
+.list-table.history-table thead th:nth-child(3) { text-align: center; }
+.list-table.history-table thead th:nth-child(4) { text-align: right; }
+.list-table.history-table thead th:nth-child(5) { text-align: center; }
+
+.list-table.history-table tbody td.col-desc { text-align: left; font-weight: 600; font-size: 14px; }
+.list-table.history-table tbody td.col-cat  { text-align: center; }
+.list-table.history-table tbody td.col-date { text-align: center; }
+.list-table.history-table tbody td.col-amt  { text-align: right; font-weight: 700; font-size: 15px; }
+.list-table.history-table tbody td.col-type { text-align: center; }
+
+.list-table.history-table tbody td.col-desc { max-width: 240px; white-space: normal; word-break: break-word; }
+
+/* ===== Type Badges (used in History) ===== */
+.typ-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.typ-badge.expense {
+  background: rgba(239,68,68,0.12);
+  color: #dc2626;
+}
+.typ-badge.income {
+  background: rgba(34,197,94,0.12);
+  color: #16a34a;
+}
+.typ-badge.investment {
+  background: rgba(59,130,246,0.12);
+  color: #2563eb;
+}
+.typ-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ===== Status Badges (used in Income/Expense tables) ===== */
+.stat-badge {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.stat-badge.expense {
+  background: rgba(239,68,68,0.12);
+  color: #dc2626;
+}
+.stat-badge.income {
+  background: rgba(34,197,94,0.12);
+  color: #16a34a;
+}
+.stat-badge.investment {
+  background: rgba(59,130,246,0.12);
+  color: #2563eb;
+}
+
+/* ===== Category Badges ===== */
+.cat-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.cat-badge.food,
+.cat-badge.food { background: rgba(251,146,60,0.15); color: #ea580c; }
+.cat-badge.travel,
+.cat-badge.transport { background: rgba(59,130,246,0.15); color: #2563eb; }
+.cat-badge.shopping { background: rgba(139,92,246,0.15); color: #7c3aed; }
+.cat-badge.health { background: rgba(239,68,68,0.15); color: #dc2626; }
+.cat-badge.entertainment { background: rgba(236,72,153,0.15); color: #db2777; }
+.cat-badge.education { background: rgba(99,102,241,0.15); color: #4f46e5; }
+.cat-badge.investment { background: rgba(16,185,129,0.15); color: #059669; }
+.cat-badge.salary { background: rgba(34,197,94,0.15); color: #16a34a; }
+.cat-badge.freelance { background: rgba(20,184,166,0.15); color: #0d9488; }
+.cat-badge.bills { background: rgba(148,163,184,0.2); color: #64748b; }
+.cat-badge.others,
+.cat-badge.other { background: rgba(100,116,139,0.15); color: #64748b; }
+.cat-badge.stocks { background: rgba(59,130,246,0.15); color: #2563eb; }
+.cat-badge.mutual { background: rgba(139,92,246,0.15); color: #7c3aed; }
+.cat-badge.crypto { background: rgba(245,158,11,0.15); color: #d97706; }
+.cat-badge.gold { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.cat-badge.sip { background: rgba(16,185,129,0.15); color: #059669; }
+.cat-badge.fixed { background: rgba(99,102,241,0.15); color: #4f46e5; }
+
+/* ===== Amount Colors ===== */
+.amt-val {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.amt-val.neg { color: #dc2626; }
+.amt-val.pos { color: #16a34a; }
+.amt-val.inv { color: #2563eb; }
 
 .list-table .actions {
   display: flex;
@@ -1087,11 +1245,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 180px;
-}
-
-.list-table td .badge {
-  display: inline-flex;
-  white-space: nowrap;
 }
 
 /* Budget Section */

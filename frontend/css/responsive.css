@@ -190,10 +190,52 @@
     min-width: unset;
   }
 
-  .list-table {
+  .list-table thead {
+    display: none;
+  }
+
+  .list-table tbody,
+  .list-table tbody tr,
+  .list-table tbody td {
     display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+    width: 100%;
+  }
+
+  .list-table tbody tr {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .list-table tbody td {
+    border: none;
+    padding: 5px 0;
+    text-align: left !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .list-table tbody td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-lighter);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .list-table tbody td.col-amount,
+  .list-table tbody td.col-amt {
+    justify-content: flex-end;
+  }
+  .list-table tbody td.col-actions {
+    justify-content: center;
   }
 
   .fab, .fab-container {

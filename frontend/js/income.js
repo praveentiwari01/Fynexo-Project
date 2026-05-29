@@ -184,21 +184,26 @@ function renderIncomes() {
     return;
   }
 
+  const catClass = (cat) => {
+    const m = {
+      'food':'food','travel':'travel','transport':'transport','shopping':'shopping',
+      'health':'health','entertainment':'entertainment','education':'education',
+      'investment':'investment','salary':'salary','freelance':'freelance','bills':'bills',
+      'others':'others','other':'other','stocks':'stocks','mutual funds':'mutual',
+      'crypto':'crypto','gold':'gold','sip':'sip','fixed deposit':'fixed'
+    };
+    return m[(cat||'').toLowerCase()] || 'others';
+  };
+
   tbody.innerHTML = incomes.map(i => `
     <tr>
-      <td>
-        <span class="expense-title">${i.title}</span>
-      </td>
-      <td>${Utils.formatCurrency(i.amount)}</td>
-      <td>
-        <span class="badge badge-${getIncomeBadgeType(i.category)}">${i.category}</span>
-      </td>
-      <td>${Utils.formatDate(i.date)}</td>
-      <td>
-        <span class="transaction-amount positive">${Utils.formatCurrency(i.amount)}</span>
-      </td>
-      <td>
-        <div class="actions">
+      <td class="col-title" data-label="Title">${i.title}</td>
+      <td class="col-amount" data-label="Amount"><span class="pos">+${Utils.formatCurrency(i.amount)}</span></td>
+      <td class="col-category" data-label="Category"><span class="cat-badge ${catClass(i.category)}">${i.category}</span></td>
+      <td class="col-date" data-label="Date">${Utils.formatDate(i.date)}</td>
+      <td class="col-status" data-label="Status"><span class="stat-badge income">Income</span></td>
+      <td class="col-actions" data-label="Actions">
+        <div class="actions" style="justify-content:center">
           <button onclick="editIncome('${i.id}')" title="Edit">
             <i data-lucide="pencil" style="width:16px;height:16px"></i>
           </button>
@@ -212,14 +217,6 @@ function renderIncomes() {
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   updateIncomeSummary();
-}
-
-function getIncomeBadgeType(category) {
-  const map = {
-    'Salary': 'green', 'Freelance': 'blue', 'Business': 'purple',
-    'Investment Returns': 'yellow', 'Other': 'blue'
-  };
-  return map[category] || 'blue';
 }
 
 function updateIncomeSummary() {

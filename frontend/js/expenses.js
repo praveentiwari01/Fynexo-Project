@@ -228,21 +228,26 @@ function renderExpenses(filter = 'all', search = '') {
     return;
   }
 
+  const catClass = (cat) => {
+    const m = {
+      'food':'food','travel':'travel','transport':'transport','shopping':'shopping',
+      'health':'health','entertainment':'entertainment','education':'education',
+      'investment':'investment','salary':'salary','freelance':'freelance','bills':'bills',
+      'others':'others','other':'other','stocks':'stocks','mutual funds':'mutual',
+      'crypto':'crypto','gold':'gold','sip':'sip','fixed deposit':'fixed'
+    };
+    return m[(cat||'').toLowerCase()] || 'others';
+  };
+
   tbody.innerHTML = expenses.map(e => `
     <tr>
-      <td>
-        <span class="expense-title">${e.title}</span>
-      </td>
-      <td>${Utils.formatCurrency(e.amount)}</td>
-      <td>
-        <span class="badge badge-${getBadgeType(e.category)}">${e.category}</span>
-      </td>
-      <td>${Utils.formatDate(e.date)}</td>
-      <td>
-        <span class="transaction-amount negative">-${Utils.formatCurrency(e.amount)}</span>
-      </td>
-      <td>
-        <div class="actions">
+      <td class="col-title" data-label="Title">${e.title}</td>
+      <td class="col-amount" data-label="Amount"><span class="neg">-${Utils.formatCurrency(e.amount)}</span></td>
+      <td class="col-category" data-label="Category"><span class="cat-badge ${catClass(e.category)}">${e.category}</span></td>
+      <td class="col-date" data-label="Date">${Utils.formatDate(e.date)}</td>
+      <td class="col-status" data-label="Status"><span class="stat-badge expense">Expense</span></td>
+      <td class="col-actions" data-label="Actions">
+        <div class="actions" style="justify-content:center">
           <button onclick="editExpense('${e.id}')" title="Edit">
             <i data-lucide="pencil" style="width:16px;height:16px"></i>
           </button>
@@ -256,14 +261,6 @@ function renderExpenses(filter = 'all', search = '') {
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   updateExpenseSummary();
-}
-
-function getBadgeType(category) {
-  const map = {
-    'Food': 'green', 'Travel': 'blue', 'Shopping': 'purple',
-    'Bills': 'yellow', 'Entertainment': 'orange', 'Others': 'blue'
-  };
-  return map[category] || 'blue';
 }
 
 function updateExpenseSummary() {

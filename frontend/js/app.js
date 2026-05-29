@@ -291,24 +291,40 @@ const App = {
       return;
     }
 
-    const getBadge = (type) => {
-      if (type === 'Expense') return '<span class="badge badge-red">Expense</span>';
-      if (type === 'Investment') return '<span class="badge badge-blue">Investment</span>';
-      return '<span class="badge badge-green">Income</span>';
+    const typBadge = (type) => {
+      const cls = type.toLowerCase();
+      const icon = type === 'Expense'
+        ? '<svg class="typ-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>'
+        : type === 'Income'
+        ? '<svg class="typ-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>'
+        : '<svg class="typ-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>';
+      return `<span class="typ-badge ${cls}">${icon}${type}</span>`;
+    };
+
+    const catClass = (cat) => {
+      const m = {
+        'food':'food','travel':'travel','transport':'transport','shopping':'shopping',
+        'health':'health','entertainment':'entertainment','education':'education',
+        'investment':'investment','salary':'salary','freelance':'freelance','bills':'bills',
+        'others':'others','other':'other','stocks':'stocks','mutual funds':'mutual',
+        'crypto':'crypto','gold':'gold','sip':'sip','fixed deposit':'fixed'
+      };
+      return m[(cat||'').toLowerCase()] || 'others';
+    };
+
+    const amtStyle = (t) => {
+      const prefix = t.sign === 'negative' ? '-' : '+';
+      const cls = t.txnType === 'Expense' ? 'neg' : t.txnType === 'Investment' ? 'inv' : 'pos';
+      return `<span class="amt-val ${cls}">${prefix}${Utils.formatCurrency(t.amount)}</span>`;
     };
 
     tbody.innerHTML = txns.map(t => `
       <tr>
-        <td>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${getBadge(t.txnType)}
-            <span>${t.title}</span>
-          </div>
-        </td>
-        <td>${t.category || '-'}</td>
-        <td>${Utils.formatDate(t.date)}</td>
-        <td class="transaction-amount ${t.sign}">${t.sign === 'negative' ? '-' : '+'}${Utils.formatCurrency(t.amount)}</td>
-        <td style="text-align:right;font-size:11px;color:var(--text-lighter)">${t.txnType}</td>
+        <td class="col-desc" data-label="Description">${t.title}</td>
+        <td class="col-cat" data-label="Category"><span class="cat-badge ${catClass(t.category)}">${t.category || 'Other'}</span></td>
+        <td class="col-date" data-label="Date">${Utils.formatDate(t.date)}</td>
+        <td class="col-amt" data-label="Amount">${amtStyle(t)}</td>
+        <td class="col-type" data-label="Type">${typBadge(t.txnType)}</td>
       </tr>
     `).join('');
 

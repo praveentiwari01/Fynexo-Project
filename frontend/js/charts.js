@@ -746,10 +746,10 @@ function renderMonthlySpendingTable(monthCount, containerId = 'monthlySpendingTa
     const monthLabel = expenseMonths[i]?.month || incomeMonths[i]?.month || '';
 
     html += `<tr>
-      <td><strong>${monthLabel}</strong></td>
-      <td class="transaction-amount negative">${Utils.formatCurrency(expense)}</td>
-      <td class="transaction-amount positive">${Utils.formatCurrency(income)}</td>
-      <td class="transaction-amount positive">${Utils.formatCurrency(savings)}</td>
+      <td data-label="Month"><strong>${monthLabel}</strong></td>
+      <td class="transaction-amount negative" data-label="Expense">${Utils.formatCurrency(expense)}</td>
+      <td class="transaction-amount positive" data-label="Income">${Utils.formatCurrency(income)}</td>
+      <td class="transaction-amount positive" data-label="Savings">${Utils.formatCurrency(savings)}</td>
     </tr>`;
   }
 

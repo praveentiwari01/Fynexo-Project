@@ -312,7 +312,7 @@
       btn.textContent = 'Sending...';
       const r = await apiRequest('POST', '/api/auth/forgot-password', { email });
       if (r.ok) {
-        Toast.success("If that email is registered, you'll receive a reset link shortly.");
+        Toast.success("You'll receive a password reset link shortly.");
         closeForgotPasswordModal();
       } else {
         errorEl.textContent = r.data.error || 'Something went wrong. Please try again.';

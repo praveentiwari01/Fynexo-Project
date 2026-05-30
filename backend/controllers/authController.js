@@ -147,29 +147,31 @@ exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
 
-    if (user) {
-      const token = crypto.randomBytes(32).toString('hex');
-      user.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
-      user.resetPasswordExpires = Date.now() + 3600000;
-      await user.save({ validateBeforeSave: false });
-
-      const resetURL = `${req.protocol}://${req.get('host')}/reset-password.html?token=${token}`;
-
-      await sendEmail({
-        to: user.email,
-        subject: 'Password Reset — Fynexo',
-        html: `
-          <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
-            <h2 style="color:#2ecc71">Fynexo</h2>
-            <p>You requested a password reset. Click the button below to set a new password:</p>
-            <a href="${resetURL}" style="display:inline-block;padding:12px 24px;background:#2ecc71;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;margin:16px 0">Reset Password</a>
-            <p style="color:#666;font-size:13px">This link expires in 1 hour. If you didn't request this, ignore this email.</p>
-          </div>
-        `
-      });
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with this email address.' });
     }
 
-    res.json({ message: "If that email is registered, you'll receive a password reset link shortly." });
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save({ validateBeforeSave: false });
+
+    const resetURL = `${req.protocol}://${req.get('host')}/reset-password.html?token=${token}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: 'Password Reset — Fynexo',
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
+          <h2 style="color:#2ecc71">Fynexo</h2>
+          <p>You requested a password reset. Click the button below to set a new password:</p>
+          <a href="${resetURL}" style="display:inline-block;padding:12px 24px;background:#2ecc71;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;margin:16px 0">Reset Password</a>
+          <p style="color:#666;font-size:13px">This link expires in 1 hour. If you didn't request this, ignore this email.</p>
+        </div>
+      `
+    });
+
+    res.json({ message: 'Password reset link sent to your email.' });
   } catch (err) {
     console.error('Forgot password error:', err.message);
     res.status(500).json({ error: 'Server error. Please try again later.' });

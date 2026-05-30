@@ -157,6 +157,8 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetURL = `${req.protocol}://${req.get('host')}/reset-password.html?token=${token}`;
+    console.log(`\n  [Fynexo] Password reset link for ${user.email}:`);
+    console.log(`  ${resetURL}\n`);
 
     await sendEmail({
       to: user.email,

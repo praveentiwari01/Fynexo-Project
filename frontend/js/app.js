@@ -166,8 +166,20 @@ const App = {
     const greetingEl = document.getElementById('greetingText');
     if (greetingEl) {
       const hours = new Date().getHours();
-      const emoji = hours < 12 ? '☀️' : hours < 17 ? '🌤️' : '🌙';
-      const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
+      let emoji, greeting;
+      if (hours >= 5 && hours < 12) {
+        emoji = '☀️';
+        greeting = 'Good Morning';
+      } else if (hours >= 12 && hours < 17) {
+        emoji = '🌤️';
+        greeting = 'Good Afternoon';
+      } else if (hours >= 17 && hours < 20) {
+        emoji = '🌇';
+        greeting = 'Good Evening';
+      } else {
+        emoji = '🌙';
+        greeting = 'Good Night';
+      }
       const user = Auth.getCurrentUser();
       if (user && user.then) {
         user.then(u => {
